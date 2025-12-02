@@ -1,0 +1,18 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#4F46E5"/>
+  
+  <!-- Icon Design - Modern App Icon -->
+  <circle cx="512" cy="512" r="380" fill="#6366F1"/>
+  <circle cx="512" cy="512" r="280" fill="#818CF8"/>
+  
+  <!-- Center Symbol -->
+  <path d="M512 312C412 312 332 392 332 492C332 592 412 672 512 672C612 672 692 592 692 492C692 392 612 312 512 312ZM512 612C445 612 392 559 392 492C392 425 445 372 512 372C579 372 632 425 632 492C632 559 579 612 512 612Z" fill="white"/>
+  <circle cx="512" cy="492" r="80" fill="white"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="512" cy="220" r="30" fill="#A5B4FC"/>
+  <circle cx="512" cy="804" r="30" fill="#A5B4FC"/>
+  <circle cx="220" cy="512" r="30" fill="#A5B4FC"/>
+  <circle cx="804" cy="512" r="30" fill="#A5B4FC"/>
+</svg>

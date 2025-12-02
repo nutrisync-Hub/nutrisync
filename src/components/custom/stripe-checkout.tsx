@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Check, Loader2 } from 'lucide-react'
 
+// Inicializar Stripe Promise
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
 
 interface Plan {
@@ -70,42 +71,27 @@ export function StripeCheckout() {
     try {
       setLoading(plan.id)
 
-      // Criar sessão de checkout
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: plan.priceId,
-          planName: plan.name,
-        }),
-      })
+      const stripe = await stripePromise
 
-      const data = await response.json()
-
-      if (data.error) {
-        alert(data.error)
+      if (!stripe) {
+        alert('Erro ao carregar Stripe. Verifique sua conexão.')
         setLoading(null)
         return
       }
 
-      // Redirecionar para o checkout do Stripe
-      const stripe = await stripePromise
-      if (stripe && data.sessionId) {
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: data.sessionId,
-        })
+      // Redirecionar diretamente para o Stripe Checkout usando Payment Links
+      // Esta é a forma mais simples e funciona com static export
+      const checkoutUrl = `https://checkout.stripe.com/c/pay/${plan.priceId}`
+      
+      // Para produção, você deve criar Payment Links no dashboard do Stripe
+      // e usar as URLs geradas. Exemplo:
+      // const checkoutUrl = 'https://buy.stripe.com/test_xxxxxxxxxxxxx'
+      
+      window.location.href = checkoutUrl
 
-        if (error) {
-          console.error('Erro ao redirecionar:', error)
-          alert('Erro ao processar pagamento. Tente novamente.')
-        }
-      }
     } catch (error) {
       console.error('Erro:', error)
       alert('Erro ao processar pagamento. Tente novamente.')
-    } finally {
       setLoading(null)
     }
   }

@@ -1,14 +1,10 @@
 "use client"
 
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Check, Loader2 } from 'lucide-react'
-
-// Inicializar Stripe Promise
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
 
 interface Plan {
   id: string
@@ -24,7 +20,7 @@ const plans: Plan[] = [
     id: 'basic',
     name: 'Básico',
     price: 'R$ 29,90',
-    priceId: 'price_basic', // Substitua pelo ID real do Stripe
+    priceId: 'price_basic', // Substitua pelo ID real do Stripe Dashboard
     features: [
       'Análise de fotos de alimentos',
       'Contagem de calorias e proteínas',
@@ -37,7 +33,7 @@ const plans: Plan[] = [
     id: 'premium',
     name: 'Premium',
     price: 'R$ 49,90',
-    priceId: 'price_premium', // Substitua pelo ID real do Stripe
+    priceId: 'price_premium', // Substitua pelo ID real do Stripe Dashboard
     features: [
       'Tudo do plano Básico',
       'Análise nutricional avançada com IA',
@@ -52,7 +48,7 @@ const plans: Plan[] = [
     id: 'pro',
     name: 'Profissional',
     price: 'R$ 79,90',
-    priceId: 'price_pro', // Substitua pelo ID real do Stripe
+    priceId: 'price_pro', // Substitua pelo ID real do Stripe Dashboard
     features: [
       'Tudo do plano Premium',
       'Consultoria nutricional mensal',
@@ -71,27 +67,33 @@ export function StripeCheckout() {
     try {
       setLoading(plan.id)
 
-      const stripe = await stripePromise
+      // Chamar API para criar sessão de checkout
+      const response = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: plan.priceId,
+        }),
+      })
 
-      if (!stripe) {
-        alert('Erro ao carregar Stripe. Verifique sua conexão.')
-        setLoading(null)
-        return
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao criar sessão de checkout')
       }
 
-      // Redirecionar diretamente para o Stripe Checkout usando Payment Links
-      // Esta é a forma mais simples e funciona com static export
-      const checkoutUrl = `https://checkout.stripe.com/c/pay/${plan.priceId}`
-      
-      // Para produção, você deve criar Payment Links no dashboard do Stripe
-      // e usar as URLs geradas. Exemplo:
-      // const checkoutUrl = 'https://buy.stripe.com/test_xxxxxxxxxxxxx'
-      
-      window.location.href = checkoutUrl
+      // Redirecionar para o Stripe Checkout usando a URL retornada
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error('URL de checkout não retornada')
+      }
 
     } catch (error) {
       console.error('Erro:', error)
-      alert('Erro ao processar pagamento. Tente novamente.')
+      alert(error instanceof Error ? error.message : 'Erro ao processar pagamento. Tente novamente.')
       setLoading(null)
     }
   }

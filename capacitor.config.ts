@@ -4,7 +4,6 @@ const config: CapacitorConfig = {
   appId: 'com.tainafranco.nutrisync',
   appName: 'NutriSync',
   webDir: 'out',
-  bundledWebRuntime: false,
   server: {
     androidScheme: 'https'
   },

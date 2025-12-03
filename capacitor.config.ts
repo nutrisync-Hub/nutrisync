@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: 'automatic',
-    limitsNavigationsToAppBoundDomains: true
+    limitsNavigationsToAppBoundDomains: false
   },
   android: {
     allowMixedContent: false,
